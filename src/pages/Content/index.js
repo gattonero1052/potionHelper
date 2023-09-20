@@ -101,7 +101,7 @@ class MatchResult {
   // then if both potions are of the same importance
   // we rank the results by the balls left over.
   static compare(a, b) {
-    return a.canFill > b.canFill ? -1 : a.leftOver > b.leftOver ? -1 : 1;
+    return a.canFill > b.canFill ? -1 : a.canFill < b.canFill ? 1 : a.leftOver > b.leftOver ? -1 : 1;
   }
 }
 
@@ -200,9 +200,22 @@ class Row {
         this._addResult(currentResult, results);
       }
     } else {
-      currentResult.combination.add(up, 2)
+      let addedCount = 0;
+      while (upIndex > -1) {
+        if (this.balls[upIndex] !== up) break;
+        addedCount += 1
+        upIndex -= 1
+      }
+
+      while (downIndex < this.balls.length) {
+        if (this.balls[downIndex] !== up) break;
+        addedCount += 1
+        downIndex += 1
+      }
+
+      currentResult.combination.add(up, addedCount)
       this._rgenerate(upIndex - 1, downIndex + 1, balls, takeOnes, currentResult, results);
-      currentResult.combination.add(up, -2)
+      currentResult.combination.add(up, -addedCount)
     }
   }
 
