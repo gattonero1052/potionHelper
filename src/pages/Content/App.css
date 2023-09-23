@@ -1,0 +1,109 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300ita‌​lic,400italic,500,500italic,700,700italic,900italic,900);
+
+.title {
+  width: 100% !important;
+  text-align: center !important;
+  background-color: dodgerblue !important;
+  color: white !important;
+  font-weight: bold!important;
+  padding: 0.5rem !important;
+  box-sizing: border-box !important;
+  cursor: move !important;
+  border-top-left-radius: 10px!important;
+  border-top-right-radius: 10px!important;
+}
+
+.flex-c {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+}
+
+.flex-r,
+.flex {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.helper-widget {
+  font-family: 'Roboto', sans-serif !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: rgba(0,0,0,.7)!important;
+  backdrop-filter: blur(10px)!important;
+  border: none !important;
+  color: white !important;
+  width: auto !important;
+  height: auto !important;
+  position: fixed !important;
+  border-radius: 10px!important;
+  left: 0;
+  top: 0;
+}
+
+.helper-widget input[type='checkbox'] {
+  clip-path: circle(55% at 50% 50%);
+  transform: scale(1.5);
+}
+
+.header {
+  padding: 0.5rem !important;
+  gap: 0.5rem !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+.header .label {
+  color: #ccc !important;
+  font-size: 0.9rem;
+}
+
+.header .value {
+  color: orange !important;
+  font-weight: bold !important;
+  margin-left: 1rem !important;
+}
+
+.left label {
+  line-height: 2rem !important;
+  font-size: 1rem !important;
+}
+
+.hints {
+  gap:.2rem;
+}
+
+.hint {
+  cursor: pointer !important;
+}
+
+.body {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 0.5rem 0.5rem 0.5rem !important;
+  gap: 0.5rem !important;
+}
+
+.color {
+  height: 1rem;
+  width: 100%;
+}
+
+.color div {
+  height: 100%;
+}
+
+.color .red {
+  background: rgba(147, 17, 12, 1);
+}
+.color .black {
+  background: rgba(7, 6, 8, 1);
+}
+.color .blue {
+  background: rgba(48, 38, 130, 1);
+}
+.color .yellow {
+  background: rgba(241, 167, 6, 1);
+}
