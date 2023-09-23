@@ -31,9 +31,9 @@ import App from './App';
   }
 
   @keyframes flash {
-    0% {filter: brightness(1);}
-    50% {filter: brightness(50);}
-    100% {filter: brightness(1);}
+    0% {filter: contrast(100%) brightness(1);}
+    50% {filter: contrast(200%) brightness(15);}
+    100% {filter: contrast(100%) brightness(1);}
   }
   @keyframes remove {
     0% {opacity:1;}

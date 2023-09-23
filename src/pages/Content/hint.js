@@ -68,7 +68,7 @@ class Combination {
     let leftOver = 0;
     let canFill = true;
 
-    ;['red', 'black', 'blue', 'yellow'].forEach((key,keyIndex) => {
+    ;['red', 'black', 'blue', 'yellow'].forEach((key, keyIndex) => {
       const tc = target[key], cc = this[key];
       if (tc > cc) {
         res.add(keyIndex, tc - cc);
@@ -197,7 +197,7 @@ class Row {
   generate(option) {
     // can't select the last one when size is full
     for (let i = 0; i < this.size - (this.size === 9); i++) {
-      const currentResult = new BallResult(new Combination(), [], i);
+      const currentResult = new BallResult(new Combination(), [], [i,this.balls[i]]);
       currentResult.combination.add(this.balls[i])
       this._rgenerate(i - 1, i + 1, this.balls, option.takeOnes, currentResult, this.choices[i])
     }
@@ -215,14 +215,14 @@ class Row {
       if (takeOnes > 0) {
         // try remove down
         currentResult.combination.add(down)
-        currentResult.takeFirst.push(downIndex)
+        currentResult.takeFirst.push([downIndex, down])
         this._rgenerate(downIndex - 1, upIndex, balls, takeOnes - 1, currentResult, results);
         currentResult.combination.add(down, -1)
         currentResult.takeFirst.splice(-1, 1);
 
         // try remove up
         currentResult.combination.add(up)
-        currentResult.takeFirst.push(upIndex)
+        currentResult.takeFirst.push([upIndex, up])
         this._rgenerate(downIndex, upIndex + 1, balls, takeOnes - 1, currentResult, results);
         currentResult.combination.add(up, -1)
         currentResult.takeFirst.splice(-1, 1);
@@ -251,7 +251,7 @@ class Row {
 
   _addResult(ballResult, results) {
     const combination = ballResult.combination;
-    results.push(new BallResult(new Combination(combination.red, combination.black, combination.blue, combination.yellow), [...ballResult.takeFirst], ballResult.takeLast))
+    results.push(new BallResult(new Combination(combination.red, combination.black, combination.blue, combination.yellow), [...ballResult.takeFirst], [...ballResult.takeLast]))
   }
 }
 
@@ -344,11 +344,11 @@ class Action {
     this.potion = potion;
   }
   getLog() {
-    let takeFirstStr = this.takeFirst.join(',');
+    let takeFirstStr = this.takeFirst.map(([index, color]) => index).join(',');
     if (takeFirstStr) {
       takeFirstStr = `removing ${takeFirstStr} and `;
     }
-    let res = `In row ${this.rowIndex}, ${takeFirstStr}take ${this.takeLast}`;
+    let res = `In row ${this.rowIndex}, ${takeFirstStr}take ${this.takeLast[0]}`;
     return res;
   }
 }

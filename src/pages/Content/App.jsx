@@ -1,9 +1,13 @@
-import { Button, Tag, notification, Tooltip } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGithubAlt, faDiscord } from '@fortawesome/free-brands-svg-icons';
+import { Button, notification, Tooltip } from 'antd';
 import React, { forwardRef } from 'react';
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { getHint } from './hint';
 
 import './App.css';
+
+const VERSION = `0.1`;
 
 const DEFAULTS = {
   MAX_HELP: 1,
@@ -24,6 +28,7 @@ const Actions = {
 const Ball = ({
   rowIndex,
   colIndex,
+  colorIndex,
   animationType = 'flash',
   animationTrigger = 0,
 }) => {
@@ -43,11 +48,20 @@ const Ball = ({
       }
     });
   }, [animationType, rowIndex, colIndex]);
-
+  const ballColor = ['Red', 'Black', 'Blue', 'Yellow'][colorIndex];
   useEffect(() => {
     if ((animationTrigger || 0) > 0) showAnimation();
   }, [animationTrigger, showAnimation]);
-  return <Tag color="blue">{`(${rowIndex},${colIndex})`}</Tag>;
+  // return <Tag color="blue">{`(${rowIndex},${colIndex})`}</Tag>;
+  return (
+    <Tooltip
+      placement="top"
+      title={`${ballColor} ball at ${rowIndex},${colIndex}`}
+      arrow={true}
+    >
+      <div className={`ball ${ballColor}`}></div>
+    </Tooltip>
+  );
 };
 
 const Widget = forwardRef(({ hints, nextColor, actionCallback }, contentEl) => {
@@ -60,24 +74,25 @@ const Widget = forwardRef(({ hints, nextColor, actionCallback }, contentEl) => {
     : 0;
   const percentageStr = nextColor
     ? {
-        red: (nextColor.red / nextColorTotal) * 100 + '%',
-        black: (nextColor.black / nextColorTotal) * 100 + '%',
-        blue: (nextColor.blue / nextColorTotal) * 100 + '%',
-        yellow: (nextColor.yellow / nextColorTotal) * 100 + '%',
+        red: Number((nextColor.red / nextColorTotal) * 100).toFixed(2) + '%',
+        black:
+          Number((nextColor.black / nextColorTotal) * 100).toFixed(2) + '%',
+        blue: Number((nextColor.blue / nextColorTotal) * 100).toFixed(2) + '%',
+        yellow:
+          Number((nextColor.yellow / nextColorTotal) * 100).toFixed(2) + '%',
       }
     : '';
 
   return (
     <div ref={contentEl} className="helper-widget flex-c">
       <div
-        className="title"
+        className="title flex"
         draggable="true"
         onDragStart={({ clientX, clientY }) => {
           const { top, left } = contentEl.current.getBoundingClientRect();
           setDragStartPosition([clientX, clientY, top, left]);
         }}
         onDragOver={({ clientX, clientY }) => {
-          console.log(clientX);
           requestAnimationFrame(() => {
             const [startX, startY, startTop, startLeft] = dragStartPosition;
             contentEl.current.style.left = `${startLeft + clientX - startX}px`;
@@ -85,7 +100,15 @@ const Widget = forwardRef(({ hints, nextColor, actionCallback }, contentEl) => {
           });
         }}
       >
-        Boardgame helper
+        <span className="title-text">Boardgame helper - Potion<span className="title-version">v {VERSION}</span></span>
+        <div className="link-icons">
+          <a href="https://github.com/gattonero1052/potionHelper">
+            <FontAwesomeIcon icon={faGithubAlt} />
+          </a>
+          <a href="https://discord.com/channels/673438823526694952/1155274541061378070">
+            <FontAwesomeIcon icon={faDiscord} />
+          </a>
+        </div>
       </div>
       <div className="header flex-c">
         <div className="flex">
@@ -116,7 +139,7 @@ const Widget = forwardRef(({ hints, nextColor, actionCallback }, contentEl) => {
                 name="potion"
                 defaultChecked="true"
                 onChange={(e) => {
-                  actionCallback(Actions.SET_LEFT_CHECKED, e.target.value);
+                  actionCallback(Actions.SET_LEFT_CHECKED, e.target.checked);
                 }}
               />
             </label>
@@ -128,7 +151,7 @@ const Widget = forwardRef(({ hints, nextColor, actionCallback }, contentEl) => {
                 name="potion"
                 defaultChecked="true"
                 onChange={(e) => {
-                  actionCallback(Actions.SET_RIGHT_CHECKED, e.target.value);
+                  actionCallback(Actions.SET_RIGHT_CHECKED, e.target.checked);
                 }}
               />
             </label>
@@ -212,39 +235,39 @@ const Widget = forwardRef(({ hints, nextColor, actionCallback }, contentEl) => {
                   })
                 }
               >
-                <div>
-                  {action.takeFirst.length ? (
-                    <>
-                      <span>Take </span>
-                      {action.takeFirst.map((colIndex) => (
-                        <Ball
-                          rowIndex={action.rowIndex}
-                          colIndex={colIndex}
-                          animationType={'remove'}
-                          animationTrigger={animationTrigger[index]}
-                        />
-                      ))}
-                      <span>{'. '}</span>
-                    </>
-                  ) : null}
-                  {
-                    <>
-                      <span>Explode </span>
+                {action.takeFirst.length ? (
+                  <>
+                    <span>Take </span>
+                    {action.takeFirst.map(([colIndex, colorIndex]) => (
                       <Ball
                         rowIndex={action.rowIndex}
-                        colIndex={action.takeLast}
-                        animationType={'flash'}
+                        colIndex={colIndex}
+                        colorIndex={colorIndex}
+                        animationType={'remove'}
                         animationTrigger={animationTrigger[index]}
                       />
-                      <span>{'. '}</span>
-                    </>
-                  }
-                  {
-                    <span>{`Fill ${
-                      action.potion.index ? 'Right' : 'Left'
-                    }`}</span>
-                  }
-                </div>
+                    ))}
+                    <span> </span>
+                  </>
+                ) : null}
+                {
+                  <>
+                    <span>Explode </span>
+                    <Ball
+                      rowIndex={action.rowIndex}
+                      colIndex={action.takeLast[0]}
+                      colorIndex={action.takeLast[1]}
+                      animationType={'flash'}
+                      animationTrigger={animationTrigger[index]}
+                    />
+                    <span> </span>
+                  </>
+                }
+                {
+                  <span>{`Fill ${
+                    action.potion.index ? 'Right' : 'Left'
+                  }`}</span>
+                }
               </div>
             );
           })}
